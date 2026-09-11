@@ -1,0 +1,27 @@
+{
+  "version": "1.0.0",
+  "scenarios": [
+    {
+      "id": "scenario_01_flash_flood_surge",
+      "name": "Monsoon Flash Flood Surge (Zone A)",
+      "target_zone": "Zone A - Riverfront & Central Metro",
+      "severity_increase": 0.4,
+      "casualty_surge": 75,
+      "recommended_action": "Deploy Amphibious Rescue and Medical units immediately"
+    },
+    {
+      "id": "scenario_02_road_collapse",
+      "name": "NH-24 Corridor Blockage",
+      "target_zone": "Zone B - Foothills & Industrial Belt",
+      "delay_minutes": 25,
+      "recommended_action": "Reroute Emergency Care convoy via Western Bypass"
+    },
+    {
+      "id": "scenario_03_medical_depletion",
+      "name": "Zone A Critical Triage Depletion",
+      "target_zone": "Zone A - Riverfront & Central Metro",
+      "alert_type": "CRITICAL_SHORTAGE",
+      "recommended_action": "Inter-agency inventory transfer from NGO Beta"
+    }
+  ]
+}
