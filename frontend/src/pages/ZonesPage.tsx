@@ -6,7 +6,7 @@ import { getSeverityColor } from '../utils/formatters';
 import { Layers, Users, MapPin, Activity, Radio } from 'lucide-react';
 
 export const ZonesPage: React.FC = () => {
-  const { zones, allocations, selectedZone, selectedZoneId, setSelectedZoneId } = useDashboardData();
+  const { zones, resources, allocations, selectedZone, selectedZoneId, setSelectedZoneId } = useDashboardData();
 
   return (
     <div className="space-y-4 max-w-[1700px] mx-auto pb-8">
@@ -32,6 +32,8 @@ export const ZonesPage: React.FC = () => {
             zones={zones}
             selectedZoneId={selectedZoneId}
             onSelectZone={setSelectedZoneId}
+            resources={resources}
+            allocations={allocations}
           />
         </div>
 

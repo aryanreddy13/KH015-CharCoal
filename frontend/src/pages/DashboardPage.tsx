@@ -16,6 +16,7 @@ import { Loader2, AlertCircle } from 'lucide-react';
 export const DashboardPage: React.FC = () => {
   const {
     zones,
+    resources,
     allocations,
     alerts,
     auditLogs,
@@ -121,6 +122,8 @@ export const DashboardPage: React.FC = () => {
             zones={zones}
             selectedZoneId={selectedZoneId}
             onSelectZone={setSelectedZoneId}
+            resources={resources}
+            allocations={allocations}
           />
         </div>
 

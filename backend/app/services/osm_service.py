@@ -154,22 +154,23 @@ class OSMService:
         origin_lon: float,
         dest_lat: float,
         dest_lon: float,
+        include_geometry: bool = False,
     ) -> Optional[Dict[str, Any]]:
         """
         Calculates real road distance and driving travel duration via OpenStreetMap / OSRM Routing Engine.
-        Endpoint: https://router.project-osrm.org/route/v1/driving/{origin_lon},{origin_lat};{dest_lon},{dest_lat}?overview=false
+        Optionally returns exact road geometry coordinate waypoints for map rendering.
         """
-        cache_key = f"osm_route:{round(origin_lat, 4)}:{round(origin_lon, 4)}:{round(dest_lat, 4)}:{round(dest_lon, 4)}"
+        cache_key = f"osm_route:{round(origin_lat, 4)}:{round(origin_lon, 4)}:{round(dest_lat, 4)}:{round(dest_lon, 4)}:geom={include_geometry}"
         cached = self._get_from_cache(cache_key)
         if cached is not None:
             return cached
 
         url = f"{self.osrm_url}/{origin_lon},{origin_lat};{dest_lon},{dest_lat}"
-        params = {"overview": "false"}
+        params = {"overview": "full" if include_geometry else "false", "geometries": "geojson" if include_geometry else "polyline"}
         headers = {"User-Agent": self.USER_AGENT}
 
         try:
-            with httpx.Client(timeout=1.5) as client:
+            with httpx.Client(timeout=2.0) as client:
                 res = client.get(url, params=params, headers=headers)
                 if res.status_code == 200:
                     data = res.json()
@@ -182,6 +183,13 @@ class OSMService:
                         dist_km = round(distance_meters / 1000.0, 2)
                         eta_min = max(1, math.ceil(duration_seconds / 60.0))
 
+                        coords = []
+                        if include_geometry:
+                            geom = r0.get("geometry", {})
+                            raw_coords = geom.get("coordinates", [])
+                            # OSRM GeoJSON is [lon, lat], convert to [lat, lon] for Leaflet
+                            coords = [[c[1], c[0]] for c in raw_coords if len(c) >= 2]
+
                         route_res = {
                             "distance_meters": distance_meters,
                             "distance_km": dist_km,
@@ -189,6 +197,7 @@ class OSMService:
                             "eta_seconds": duration_seconds,
                             "eta_minutes": eta_min,
                             "eta_text": f"ETA ~{eta_min} min",
+                            "coordinates": coords,
                             "is_traffic_aware": False,
                             "source": "OSM_OSRM",
                         }
@@ -206,6 +215,20 @@ class OSMService:
         # Average emergency vehicle speed 35 km/h
         eta_sec = max(60, int((dist_km / 35.0) * 3600))
         eta_min = max(1, math.ceil(eta_sec / 60.0))
+
+        # Generate realistic curved waypoint coordinates between origin and dest for fallback
+        fallback_coords = []
+        if include_geometry:
+            steps = 8
+            for i in range(steps + 1):
+                t = i / float(steps)
+                # Linear interpolation with slight sinusoidal curve
+                lat_i = origin_lat + t * (dest_lat - origin_lat)
+                lon_i = origin_lon + t * (dest_lon - origin_lon)
+                # Add natural curve offset
+                curve_offset = math.sin(t * math.pi) * 0.002
+                fallback_coords.append([round(lat_i + curve_offset, 5), round(lon_i + curve_offset, 5)])
+
         return {
             "distance_meters": dist_m,
             "distance_km": dist_km,
@@ -213,6 +236,7 @@ class OSMService:
             "eta_seconds": eta_sec,
             "eta_minutes": eta_min,
             "eta_text": f"ETA ~{eta_min} min",
+            "coordinates": fallback_coords,
             "is_traffic_aware": False,
             "source": "HAVERSINE_ESTIMATE",
         }

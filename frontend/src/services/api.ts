@@ -212,5 +212,33 @@ export const apiService = {
       method: 'POST',
       body: JSON.stringify({ reason }),
     }),
+
+  // Emergency Services Discovery & Supply Route Calculation
+  getNearbyServices: (params: { latitude?: number; longitude?: number; radius_km?: number; type?: string }) => {
+    const q = new URLSearchParams();
+    if (params.latitude !== undefined) q.append('latitude', String(params.latitude));
+    if (params.longitude !== undefined) q.append('longitude', String(params.longitude));
+    if (params.radius_km !== undefined) q.append('radius_km', String(params.radius_km));
+    if (params.type) q.append('type', params.type);
+    return fetchJson<{ count: number; services: any[] }>(`/emergency-services/nearby?${q.toString()}`);
+  },
+  getEmergencyRoute: (originLat: number, originLon: number, destLat: number, destLon: number) => {
+    const q = new URLSearchParams({
+      origin_lat: String(originLat),
+      origin_lon: String(originLon),
+      dest_lat: String(destLat),
+      dest_lon: String(destLon),
+    });
+    return fetchJson<{
+      distance_km: number;
+      distance_meters: number;
+      distance_text?: string;
+      eta_minutes: number;
+      eta_text: string;
+      coordinates: [number, number][];
+      source: string;
+    }>(`/emergency-services/route?${q.toString()}`);
+  },
 };
+
 
