@@ -162,8 +162,10 @@ class EmailService:
 
         # 3. Dispatch via Resend REST API
         try:
+            from_addr = settings.RESEND_FROM_EMAIL or "onboarding@resend.dev"
+            from_header = f"Sanjivani Disaster Command <{from_addr}>" if "@" in from_addr and "<" not in from_addr else from_addr
             payload = {
-                "from": settings.RESEND_FROM_EMAIL or "onboarding@resend.dev",
+                "from": from_header,
                 "to": [target_recipient],
                 "subject": subject,
                 "html": html_content,
@@ -299,8 +301,10 @@ class EmailService:
             return True, "DEMO"
 
         try:
+            from_addr = settings.RESEND_FROM_EMAIL or "onboarding@resend.dev"
+            from_header = f"Sanjivani Citizen Reports <{from_addr}>" if "@" in from_addr and "<" not in from_addr else from_addr
             payload = {
-                "from": settings.RESEND_FROM_EMAIL or "onboarding@resend.dev",
+                "from": from_header,
                 "to": [target_recipient],
                 "subject": subject,
                 "html": html_content,

@@ -42,7 +42,8 @@ class Settings(BaseSettings):
     # Resend Emergency Email
     ENABLE_RESEND: bool = os.getenv("ENABLE_RESEND", "false").lower() in ("true", "1", "yes")
     RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "")
-    RESEND_FROM_EMAIL: str = os.getenv("RESEND_FROM_EMAIL", "emergency-alerts@sanjivani-relief.gov")
+    RESEND_FROM_EMAIL: str = os.getenv("RESEND_FROM_EMAIL", "onboarding@resend.dev")
+    NOTIFICATION_EMAIL: str = os.getenv("NOTIFICATION_EMAIL", "aryanreddy2006@gmail.com")
 
     # PagerDuty Emergency Escalation
     ENABLE_PAGERDUTY: bool = os.getenv("ENABLE_PAGERDUTY", "false").lower() in ("true", "1", "yes")
