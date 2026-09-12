@@ -70,6 +70,7 @@ export default function ReportScreen() {
 
   // Photo state
   const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [photoBase64, setPhotoBase64] = useState<string | null>(null);
 
   // Submitting
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -83,8 +84,6 @@ export default function ReportScreen() {
       setLockState('LOCKED');
     } else {
       setLockState(res.state);
-      // Fallback coordinates
-      setLocation(locationService.createManualFallback());
     }
   };
 
@@ -93,11 +92,11 @@ export default function ReportScreen() {
   }, []);
 
   // Resource toggle
-  const toggleResource = (res: RequiredResource) => {
-    if (selectedResources.includes(res)) {
-      setSelectedResources(selectedResources.filter((r) => r !== res));
+  const toggleResource = (resource: RequiredResource) => {
+    if (selectedResources.includes(resource)) {
+      setSelectedResources(selectedResources.filter((r) => r !== resource));
     } else {
-      setSelectedResources([...selectedResources, res]);
+      setSelectedResources([...selectedResources, resource]);
     }
   };
 
@@ -113,11 +112,15 @@ export default function ReportScreen() {
       const result = await ImagePicker.launchCameraAsync({
         allowsEditing: true,
         aspect: [4, 3],
-        quality: 0.6, // Keep compressed for fast emergency transmission
+        quality: 0.5, // Keep compressed for fast transmission
+        base64: true,
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         setPhotoUri(result.assets[0].uri);
+        if (result.assets[0].base64) {
+          setPhotoBase64(result.assets[0].base64);
+        }
       }
     } catch (err: any) {
       console.warn('Camera launch error:', err);
@@ -137,11 +140,15 @@ export default function ReportScreen() {
       const result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
         aspect: [4, 3],
-        quality: 0.6,
+        quality: 0.5,
+        base64: true,
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         setPhotoUri(result.assets[0].uri);
+        if (result.assets[0].base64) {
+          setPhotoBase64(result.assets[0].base64);
+        }
       }
     } catch (err: any) {
       console.warn('Image picker error:', err);
@@ -162,6 +169,10 @@ export default function ReportScreen() {
       const settings = await storageService.getSettings();
       const localId = `report_local_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
+      const photoPayload = photoBase64
+        ? `data:image/jpeg;base64,${photoBase64}`
+        : (photoUri ? `evidence_${localId}.jpg` : undefined);
+
       const reportPayload = {
         disaster_type: disasterType,
         description: description.trim(),
@@ -171,7 +182,7 @@ export default function ReportScreen() {
         latitude: activeLoc.latitude,
         longitude: activeLoc.longitude,
         required_resources: selectedResources,
-        photo_url: photoUri ? `evidence_${localId}.jpg` : undefined,
+        photo_url: photoPayload,
         status: 'PENDING REVIEW',
       };
 

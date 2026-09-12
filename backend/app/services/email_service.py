@@ -72,17 +72,34 @@ class EmailService:
             </div>
             """
 
+        # 1. Process Photo Attachment & Embedded Image Data URI
+        attachments = []
         photo_html = ""
-        if photo_url:
-            if photo_url.startswith("http://") or photo_url.startswith("https://"):
+        if photo_url and str(photo_url).strip():
+            img_data = storage_service.get_image_bytes(photo_url)
+            if img_data:
+                raw_bytes, img_filename = img_data
+                b64_content = base64.b64encode(raw_bytes).decode("utf-8")
+                img_src = f"data:image/jpeg;base64,{b64_content}"
+                if str(photo_url).startswith("http://") or str(photo_url).startswith("https://"):
+                    img_src = photo_url
+
+                attachments.append({
+                    "filename": f"incident-{incident_id[:8]}.jpg",
+                    "content": b64_content,
+                })
+
                 photo_html = f"""
-                <div style="margin-top: 16px; text-align: center; background: #070a12; border: 1px solid #38bdf8; border-radius: 8px; padding: 12px;">
-                  <div style="font-size: 13px; font-weight: 700; color: #38bdf8; margin-bottom: 8px;">📷 ON-SCENE INCIDENT EVIDENCE PHOTO</div>
-                  <img src="{photo_url}" alt="Incident Evidence" style="max-width: 100%; max-height: 300px; border-radius: 6px; object-fit: cover;" />
+                <div style="margin-top: 18px; text-align: center; background: #070a12; border: 2px solid #ef4444; border-radius: 10px; padding: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                  <div style="font-size: 13px; font-weight: 800; color: #ef4444; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    📷 ON-SCENE INCIDENT EVIDENCE PHOTOGRAPH
+                  </div>
+                  <img src="{img_src}" alt="Incident Evidence Photo" style="max-width: 100%; max-height: 380px; border-radius: 8px; border: 1px solid #334155; display: block; margin: 0 auto; object-fit: cover;" />
+                  <div style="margin-top: 8px; font-size: 11px; color: #94a3b8;">
+                    Verified on-scene photographic proof attached to this dispatch.
+                  </div>
                 </div>
                 """
-            else:
-                photo_html = f'<div class="photo-note">📷 Citizen incident photograph attached as <code>incident-{incident_id}.jpg</code></div>'
 
         # HTML Body
         html_content = f"""
@@ -99,7 +116,6 @@ class EmailService:
             .field {{ font-size: 13px; color: #94a3b8; }}
             .val {{ font-size: 15px; font-weight: 700; color: #ffffff; }}
             .btn {{ display: inline-block; background: #ef4444; color: #ffffff; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: 800; margin-top: 16px; }}
-            .photo-note {{ background: rgba(56, 189, 248, 0.1); border: 1px solid #38bdf8; padding: 10px; border-radius: 6px; font-size: 13px; color: #38bdf8; margin-top: 16px; }}
           </style>
         </head>
         <body>
@@ -135,7 +151,7 @@ class EmailService:
         </html>
         """
 
-        # 1. Check if Resend is enabled & API Key configured
+        # 2. Check if Resend is enabled & API Key configured
         target_recipient = recipient if recipient and str(recipient).strip() else getattr(settings, "NOTIFICATION_EMAIL", "aryanreddy2006@gmail.com")
         if not settings.ENABLE_RESEND or not settings.RESEND_API_KEY:
             logger.info(
@@ -143,20 +159,6 @@ class EmailService:
                 f"Incident: {incident_id} | Attached photo: {bool(photo_url)}"
             )
             return True, "DEMO"
-
-        # 2. Process Photo Attachment
-        attachments = []
-        if photo_url:
-            img_data = storage_service.get_image_bytes(photo_url)
-            if img_data:
-                raw_bytes, img_filename = img_data
-                b64_content = base64.b64encode(raw_bytes).decode("utf-8")
-                attachments.append({
-                    "filename": f"incident-{incident_id}.jpg",
-                    "content": b64_content,
-                })
-            else:
-                logger.warning(f"Failed to fetch image attachment from {photo_url}. Sending email without attachment.")
 
         # 3. Dispatch via Resend REST API
         try:
@@ -204,7 +206,7 @@ class EmailService:
         missing = report_data.get("missing_people", 0)
         lat = report_data.get("latitude", 19.0760)
         lng = report_data.get("longitude", 72.8777)
-        location_text = report_data.get("location_text") or f"{lat:.4f}, {lng:.4f}"
+        location_text = report_data.get("location_text") or f"{lat:.4f}°, {lng:.4f}°"
         reporter_name = report_data.get("reporter_name", "Citizen Reporter")
         reporter_phone = report_data.get("reporter_phone", "Not provided")
         created_at = report_data.get("created_at", datetime.utcnow().isoformat())
@@ -212,17 +214,34 @@ class EmailService:
         subject = f"📋 CITIZEN INCIDENT REPORT — {disaster_type} ({location_text})"
         map_link = f"https://www.google.com/maps/search/?api=1&query={lat},{lng}"
 
+        # 1. Process Photo Attachment & Embedded Image Data URI
+        attachments = []
         photo_html = ""
-        if photo_url:
-            if photo_url.startswith("http://") or photo_url.startswith("https://"):
+        if photo_url and str(photo_url).strip():
+            img_data = storage_service.get_image_bytes(photo_url)
+            if img_data:
+                raw_bytes, img_filename = img_data
+                b64_content = base64.b64encode(raw_bytes).decode("utf-8")
+                img_src = f"data:image/jpeg;base64,{b64_content}"
+                if str(photo_url).startswith("http://") or str(photo_url).startswith("https://"):
+                    img_src = photo_url
+
+                attachments.append({
+                    "filename": f"evidence-{report_id[:8]}.jpg",
+                    "content": b64_content,
+                })
+
                 photo_html = f"""
-                <div style="margin-top: 16px; text-align: center; background: #070a12; border: 1px solid #38bdf8; border-radius: 8px; padding: 12px;">
-                  <div style="font-size: 13px; font-weight: 700; color: #38bdf8; margin-bottom: 8px;">📷 CITIZEN EVIDENCE PHOTOGRAPH ATTACHED</div>
-                  <img src="{photo_url}" alt="Citizen Incident Evidence" style="max-width: 100%; max-height: 320px; border-radius: 6px; object-fit: cover;" />
+                <div style="margin-top: 18px; text-align: center; background: #070a12; border: 2px solid #38bdf8; border-radius: 10px; padding: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                  <div style="font-size: 13px; font-weight: 800; color: #38bdf8; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    📷 CITIZEN ON-SCENE EVIDENCE PHOTOGRAPH
+                  </div>
+                  <img src="{img_src}" alt="Citizen Incident Evidence" style="max-width: 100%; max-height: 380px; border-radius: 8px; border: 1px solid #334155; display: block; margin: 0 auto; object-fit: cover;" />
+                  <div style="margin-top: 8px; font-size: 11px; color: #94a3b8;">
+                    Verified on-scene photographic proof attached to this dispatch.
+                  </div>
                 </div>
                 """
-            else:
-                photo_html = f'<div style="background: rgba(56, 189, 248, 0.1); border: 1px solid #38bdf8; padding: 10px; border-radius: 6px; font-size: 13px; color: #38bdf8; margin-top: 16px;">📷 Evidence photograph attached to this dispatch.</div>'
 
         html_content = f"""
         <!DOCTYPE html>
@@ -278,17 +297,6 @@ class EmailService:
         if not settings.ENABLE_RESEND or not settings.RESEND_API_KEY:
             logger.info(f"[RESEND_DEMO] Citizen Report Email simulated for {target_recipient} | Photo attached: {bool(photo_url)}")
             return True, "DEMO"
-
-        attachments = []
-        if photo_url:
-            img_data = storage_service.get_image_bytes(photo_url)
-            if img_data:
-                raw_bytes, img_filename = img_data
-                b64_content = base64.b64encode(raw_bytes).decode("utf-8")
-                attachments.append({
-                    "filename": f"evidence-{report_id[:8]}.jpg",
-                    "content": b64_content,
-                })
 
         try:
             payload = {

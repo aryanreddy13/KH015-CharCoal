@@ -23,12 +23,13 @@ export const ReporterPage: React.FC = () => {
   const [peopleAffected, setPeopleAffected] = useState(10);
   const [injured, setInjured] = useState(0);
   const [missing, setMissing] = useState(0);
-  const [latitude, setLatitude] = useState(28.6139);
-  const [longitude, setLongitude] = useState(77.2090);
+  const [latitude, setLatitude] = useState(19.0760);
+  const [longitude, setLongitude] = useState(72.8777);
   const [locating, setLocating] = useState(false);
   const [locationStatus, setLocationStatus] = useState<string | null>(null);
   const [selectedResources, setSelectedResources] = useState<string[]>(['Rescue']);
   const [photoSelected, setPhotoSelected] = useState<string | null>(null);
+  const [photoDataUri, setPhotoDataUri] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [reportId, setReportId] = useState<string | null>(null);
@@ -55,16 +56,16 @@ export const ReporterPage: React.FC = () => {
         },
         (err) => {
           setLocating(false);
-          // Fallback simulation coordinates for demo
-          setLatitude(28.6145);
-          setLongitude(77.2085);
-          setLocationStatus('Coordinates Acquired (Demo Sector A)');
+          // Fallback simulation coordinates for Mumbai
+          setLatitude(19.0760);
+          setLongitude(72.8777);
+          setLocationStatus('Coordinates Acquired (Mumbai Central)');
         },
         { timeout: 8000 }
       );
     } else {
       setLocating(false);
-      setLocationStatus('GPS Not Supported (Using Demo Coordinates)');
+      setLocationStatus('GPS Not Supported (Using Mumbai Coordinates)');
     }
   };
 
@@ -76,7 +77,15 @@ export const ReporterPage: React.FC = () => {
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setPhotoSelected(e.target.files[0].name);
+      const file = e.target.files[0];
+      setPhotoSelected(file.name);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setPhotoDataUri(event.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -94,7 +103,7 @@ export const ReporterPage: React.FC = () => {
         missing_people: Number(missing) || 0,
         latitude,
         longitude,
-        photo_url: photoSelected ? `https://photos.emergency.gov/${photoSelected}` : undefined,
+        photo_url: photoDataUri || undefined,
       });
 
       setReportId(res.id);
@@ -315,12 +324,28 @@ export const ReporterPage: React.FC = () => {
               </div>
             )}
 
-            {/* Photo Attachment */}
+            {/* Photo Attachment & Preview */}
             <label className="w-full py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-700 text-slate-300 text-xs font-medium flex items-center justify-center space-x-2 cursor-pointer transition-colors">
               <Camera className="w-4 h-4 text-sky-400" />
-              <span>{photoSelected ? `Attached: ${photoSelected}` : 'Attach Photo (Optional)'}</span>
+              <span>{photoSelected ? `Attached: ${photoSelected}` : 'Attach Evidence Photo (Optional)'}</span>
               <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
             </label>
+
+            {photoDataUri && (
+              <div className="relative rounded-xl overflow-hidden border border-sky-500/40 bg-slate-900 p-1">
+                <img src={photoDataUri} alt="Evidence Preview" className="w-full h-32 object-cover rounded-lg" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPhotoSelected(null);
+                    setPhotoDataUri(null);
+                  }}
+                  className="absolute top-2 right-2 px-2 py-1 bg-rose-600/90 text-white text-[10px] font-bold rounded-md"
+                >
+                  ✕ REMOVE
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Big Submit Button */}
