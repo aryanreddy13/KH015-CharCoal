@@ -1,19 +1,19 @@
 {
   "expo": {
-    "name": "PS20 Citizen",
-    "slug": "ps20-citizen-mobile",
+    "name": "Sanjivani Citizen",
+    "slug": "sanjivani-citizen-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "ps20citizen",
+    "scheme": "sanjivanicitizen",
     "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "gov.emergency.ps20citizen",
+      "bundleIdentifier": "gov.emergency.sanjivanicitizen",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "PS20 requires your location to pinpoint your emergency coordinates and dispatch rescue services accurately.",
-        "NSCameraUsageDescription": "PS20 requires camera access to attach real-time photo evidence of the disaster scenario to your emergency report.",
-        "NSPhotoLibraryUsageDescription": "PS20 requires photo library access to upload disaster evidence."
+        "NSLocationWhenInUseUsageDescription": "Sanjivani requires your location to pinpoint your emergency coordinates and dispatch rescue services accurately.",
+        "NSCameraUsageDescription": "Sanjivani requires camera access to attach real-time photo evidence of the disaster scenario to your emergency report.",
+        "NSPhotoLibraryUsageDescription": "Sanjivani requires photo library access to upload disaster evidence."
       }
     },
     "android": {
@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#090d16"
       },
-      "package": "gov.emergency.ps20citizen",
+      "package": "gov.emergency.sanjivanicitizen",
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
@@ -39,13 +39,13 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow PS20 to use your location for emergency dispatch."
+          "locationAlwaysAndWhenInUsePermission": "Allow Sanjivani to use your location for emergency dispatch."
         }
       ],
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow PS20 to access camera for incident reporting."
+          "cameraPermission": "Allow Sanjivani to access camera for incident reporting."
         }
       ],
       "expo-asset"

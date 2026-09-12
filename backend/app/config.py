@@ -23,7 +23,7 @@ for p in env_paths:
         break
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "PS20 - Agentic Disaster Relief & Emergency Resource Coordinator"
+    PROJECT_NAME: str = "Sanjivani - Agentic Disaster Relief & Emergency Resource Coordinator"
     API_V1_STR: str = "/api"
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./disaster.db")
     CORS_ORIGINS: List[str] = [
@@ -42,7 +42,7 @@ class Settings(BaseSettings):
     # Resend Emergency Email
     ENABLE_RESEND: bool = os.getenv("ENABLE_RESEND", "false").lower() in ("true", "1", "yes")
     RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "")
-    RESEND_FROM_EMAIL: str = os.getenv("RESEND_FROM_EMAIL", "emergency-alerts@ps20-relief.gov")
+    RESEND_FROM_EMAIL: str = os.getenv("RESEND_FROM_EMAIL", "emergency-alerts@sanjivani-relief.gov")
 
     # PagerDuty Emergency Escalation
     ENABLE_PAGERDUTY: bool = os.getenv("ENABLE_PAGERDUTY", "false").lower() in ("true", "1", "yes")

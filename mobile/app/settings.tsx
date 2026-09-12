@@ -81,7 +81,7 @@ export default function SettingsScreen() {
       if (isHealthy) {
         setTestResult({
           ok: true,
-          message: 'Connected successfully to PS20 Command Server!',
+          message: 'Connected successfully to Sanjivani Command Server!',
         });
       } else {
         setTestResult({

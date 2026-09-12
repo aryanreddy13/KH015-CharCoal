@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 NEED_ASSESSMENT_PROMPT_VERSION = "1.0"
 
-SYSTEM_PROMPT = """You are the PS20 Disaster Incident Understanding & Extraction Engine.
+SYSTEM_PROMPT = """You are the Sanjivani Disaster Incident Understanding & Extraction Engine.
 Your sole job is strict, factual extraction of what the citizen actually reported.
 
 CRITICAL EXTRACTION RULES:

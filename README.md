@@ -1,6 +1,6 @@
-# PS20 — Agentic Disaster Relief & Emergency Resource Coordinator
+# Sanjivani — Agentic Disaster Relief & Emergency Resource Coordinator
 
-**PS20** is an intelligent, multi-agency disaster operations management and resource coordination platform. It integrates autonomous agent pipelines, geospatial risk assessment, realtime telemetry dispatching, and a mobile-first citizen incident reporting portal.
+**Sanjivani** is an intelligent, multi-agency disaster operations management and resource coordination platform. It integrates autonomous agent pipelines, geospatial risk assessment, realtime telemetry dispatching, and a mobile-first citizen incident reporting portal.
 
 ---
 

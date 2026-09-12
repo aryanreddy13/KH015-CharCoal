@@ -33,7 +33,7 @@ class PagerDutyService:
         resources_str = ", ".join(incident.get("required_resources", ["Rescue", "Medical"]))
 
         automated_message = (
-            f"PS20 CRITICAL SOS. {disaster_type} emergency at {zone_name}. "
+            f"SANJIVANI CRITICAL SOS. {disaster_type} emergency at {zone_name}. "
             f"{affected_count} people affected, {injured_count} injured, {missing_count} missing. "
             f"{provider_name} response is required. Estimated arrival {eta} minutes."
         )
@@ -50,11 +50,11 @@ class PagerDutyService:
         payload = {
             "routing_key": settings.PAGERDUTY_ROUTING_KEY,
             "event_action": "trigger",
-            "dedup_key": f"ps20-incident-{incident_id}",
+            "dedup_key": f"sanjivani-incident-{incident_id}",
             "payload": {
-                "summary": f"🚨 PS20 CRITICAL SOS — {zone_name} — {disaster_type}",
+                "summary": f"🚨 SANJIVANI CRITICAL SOS — {zone_name} — {disaster_type}",
                 "severity": "critical",
-                "source": "PS20 Emergency Dispatch Coordinator",
+                "source": "Sanjivani Emergency Dispatch Coordinator",
                 "component": provider_name,
                 "group": "Disaster Response Operations",
                 "custom_details": {

@@ -12,7 +12,7 @@ def health_check(db: Session = Depends(get_db)):
         zones_count = db.query(Zone).count()
         return {
             "status": "healthy",
-            "service": "PS20 Disaster Response Command Center Backend",
+            "service": "Sanjivani Disaster Response Command Center Backend",
             "phase": "Phase 1 - Foundation & Realtime Core",
             "database_connected": True,
             "zones_count": zones_count,
