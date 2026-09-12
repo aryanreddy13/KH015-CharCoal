@@ -51,8 +51,14 @@ export const apiService = {
     }),
   getAuditLogs: (limit = 50) => fetchJson<AuditLog[]>(`/audit-logs?limit=${limit}`),
 
-  // Reports
-  getReports: (limit = 100) => fetchJson<Report[]>(`/reports?limit=${limit}`),
+  // Reports & Field Incident Management
+  getReports: (limit = 100, statusFilter?: string) => {
+    const params = new URLSearchParams();
+    if (limit) params.append('limit', String(limit));
+    if (statusFilter && statusFilter !== 'ALL') params.append('status_filter', statusFilter);
+    return fetchJson<Report[]>(`/reports?${params.toString()}`);
+  },
+  getReportById: (id: string) => fetchJson<Report>(`/reports/${id}`),
   createReport: (reportData: {
     disaster_type: string;
     description: string;
@@ -62,11 +68,43 @@ export const apiService = {
     latitude: number;
     longitude: number;
     photo_url?: string;
+    reporter_name?: string;
+    reporter_phone?: string;
+    location_text?: string;
     zone_id?: string;
   }) =>
     fetchJson<Report>('/reports', {
       method: 'POST',
       body: JSON.stringify(reportData),
+    }),
+  updateReportStatus: (reportId: string, status: string, notes?: string, actor = 'Command Administrator') =>
+    fetchJson<Report>(`/reports/${reportId}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status, notes, actor }),
+    }),
+  acceptReport: (reportId: string, notes?: string, actor = 'Command Administrator') =>
+    fetchJson<Report>(`/reports/${reportId}/accept`, {
+      method: 'POST',
+      body: JSON.stringify({ notes, actor }),
+    }),
+  dispatchReport: (reportId: string, data?: { agency_id?: string; resource_id?: string; notes?: string; actor?: string }) =>
+    fetchJson<Report>(`/reports/${reportId}/dispatch`, {
+      method: 'POST',
+      body: JSON.stringify(data || {}),
+    }),
+  resolveReport: (reportId: string, notes?: string, actor = 'Command Administrator') =>
+    fetchJson<Report>(`/reports/${reportId}/resolve`, {
+      method: 'POST',
+      body: JSON.stringify({ notes, actor }),
+    }),
+  dismissReport: (reportId: string, notes?: string, actor = 'Command Administrator') =>
+    fetchJson<Report>(`/reports/${reportId}/dismiss`, {
+      method: 'POST',
+      body: JSON.stringify({ notes, actor }),
+    }),
+  deleteReport: (reportId: string) =>
+    fetchJson<{ success: boolean; message: string }>(`/reports/${reportId}`, {
+      method: 'DELETE',
     }),
 
   // Simulation Triggers

@@ -75,6 +75,10 @@ export interface Report {
   id: string;
   zone_id?: string;
   reporter_id?: string;
+  reporter_name?: string;
+  reporter_phone?: string;
+  location_text?: string;
+  admin_notes?: string;
   disaster_type: string;
   description: string;
   people_affected: number;
@@ -83,9 +87,13 @@ export interface Report {
   latitude: number;
   longitude: number;
   photo_url?: string;
-  status: 'PENDING REVIEW' | 'VERIFIED' | 'ACTIONED' | 'REJECTED' | string;
+  status: 'PENDING REVIEW' | 'VERIFIED' | 'ACCEPTED' | 'IN_PROGRESS' | 'ACTIONED' | 'RESOLVED' | 'DISMISSED' | 'REJECTED' | string;
+  priority_score?: number;
+  priority_level?: string;
+  assessment?: any;
+  priority_assessment?: any;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
 
 export interface Zone {

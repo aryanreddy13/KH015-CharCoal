@@ -84,7 +84,11 @@ class Report(Base):
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
     photo_url = Column(String(500), nullable=True)
-    status = Column(String(50), default="PENDING REVIEW")  # PENDING REVIEW, VERIFIED, ACTIONED, REJECTED
+    reporter_name = Column(String(255), nullable=True, default="Citizen Reporter")
+    reporter_phone = Column(String(50), nullable=True)
+    location_text = Column(String(255), nullable=True)
+    admin_notes = Column(Text, nullable=True)
+    status = Column(String(50), default="PENDING REVIEW")  # PENDING REVIEW, VERIFIED, ACCEPTED, IN_PROGRESS, ACTIONED, RESOLVED, DISMISSED, REJECTED
     assessment_json = Column(JSON, nullable=True)
     assessment_version = Column(String(50), nullable=True)
     assessment_status = Column(String(50), nullable=True)

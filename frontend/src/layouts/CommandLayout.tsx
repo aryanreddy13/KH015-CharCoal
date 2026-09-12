@@ -2,13 +2,17 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Sidebar } from '../components/Sidebar';
+import { LiveNotificationToast } from '../components/LiveNotificationToast';
 import { useDashboardData } from '../hooks/useDashboardData';
 
 export const CommandLayout: React.FC = () => {
-  const { isConnected, alerts, refresh } = useDashboardData();
+  const { isConnected, alerts, incomingAlertToast, clearToast, refresh } = useDashboardData();
 
   return (
-    <div className="flex flex-col h-screen bg-ops-bg text-slate-100 overflow-hidden">
+    <div className="flex flex-col h-screen bg-ops-bg text-slate-100 overflow-hidden relative">
+      {/* Live Toast Notification from mobile reports/SOS */}
+      <LiveNotificationToast toast={incomingAlertToast} onClose={clearToast} />
+
       {/* Top Operations Header */}
       <Navbar
         isConnected={isConnected}

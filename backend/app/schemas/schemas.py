@@ -272,6 +272,10 @@ class ReportBase(BaseModel):
     latitude: float = Field(..., ge=-90.0, le=90.0)
     longitude: float = Field(..., ge=-180.0, le=180.0)
     photo_url: Optional[str] = None
+    reporter_name: Optional[str] = "Citizen Reporter"
+    reporter_phone: Optional[str] = None
+    location_text: Optional[str] = None
+    admin_notes: Optional[str] = None
     status: str = "PENDING REVIEW"
     input_mode: Optional[str] = "REPORT"
 
@@ -280,10 +284,26 @@ class ReportCreate(ReportBase):
     reporter_id: Optional[str] = None
     required_resources: Optional[List[str]] = None
 
+class ReportStatusUpdate(BaseModel):
+    status: str  # PENDING REVIEW, VERIFIED, ACCEPTED, IN_PROGRESS, ACTIONED, RESOLVED, DISMISSED, REJECTED
+    notes: Optional[str] = None
+    actor: Optional[str] = "Command Administrator"
+    assigned_agency_id: Optional[str] = None
+
+class ReportActionRequest(BaseModel):
+    notes: Optional[str] = None
+    actor: Optional[str] = "Command Administrator"
+    agency_id: Optional[str] = None
+    resource_id: Optional[str] = None
+
 class ReportResponse(ReportBase, ORMModel):
     id: str
     zone_id: Optional[str] = None
     reporter_id: Optional[str] = None
+    reporter_name: Optional[str] = None
+    reporter_phone: Optional[str] = None
+    location_text: Optional[str] = None
+    admin_notes: Optional[str] = None
     assessment: Optional[IncidentAssessment] = None
     priority_assessment: Optional[PriorityAssessment] = None
     priority_level: Optional[str] = None

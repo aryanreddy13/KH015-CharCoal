@@ -9,6 +9,7 @@ import { LiveAlertsFeed } from '../components/LiveAlertsFeed';
 import { AuditLogTimeline } from '../components/AuditLogTimeline';
 import { SimulationControls } from '../components/SimulationControls';
 import { ResourceAllocationOverview } from '../components/ResourceAllocationOverview';
+import { LiveCitizenReportsFeed } from '../components/LiveCitizenReportsFeed';
 import { Loader2, AlertCircle } from 'lucide-react';
 
 
@@ -18,6 +19,7 @@ export const DashboardPage: React.FC = () => {
     allocations,
     alerts,
     auditLogs,
+    reports,
     kpi,
     selectedZone,
     selectedZoneId,
@@ -25,6 +27,8 @@ export const DashboardPage: React.FC = () => {
     loading,
     error,
     refresh,
+    acceptReport,
+    dispatchReport,
   } = useDashboardData();
 
   if (loading && zones.length === 0) {
@@ -99,6 +103,13 @@ export const DashboardPage: React.FC = () => {
           </a>
         </div>
       </div>
+
+      {/* Live Citizen & Mobile SOS Reports Stream */}
+      <LiveCitizenReportsFeed
+        reports={reports}
+        onAcceptReport={acceptReport}
+        onDispatchReport={dispatchReport}
+      />
 
       {/* Real-time Multi-Agency Resource Allotment & Stock Monitor */}
       <ResourceAllocationOverview />
