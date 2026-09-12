@@ -103,6 +103,14 @@ class Report(Base):
     reporter = relationship("User", back_populates="reports")
     updates = relationship("ReportUpdate", back_populates="report", cascade="all, delete-orphan")
 
+    @property
+    def assessment(self):
+        return self.assessment_json
+
+    @property
+    def priority_assessment(self):
+        return self.priority_assessment_json
+
 
 class ReportUpdate(Base):
     __tablename__ = "report_updates"
@@ -311,3 +319,11 @@ class SOSEvent(Base):
     assigned_agency = relationship("Agency", foreign_keys=[assigned_agency_id])
     assigned_resource = relationship("Resource", foreign_keys=[assigned_resource_id])
     resource_allocations = relationship("ResourceAllocation", back_populates="sos_event", cascade="all, delete-orphan")
+
+    @property
+    def assessment(self):
+        return self.assessment_json
+
+    @property
+    def priority_assessment(self):
+        return self.priority_assessment_json

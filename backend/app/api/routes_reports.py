@@ -34,6 +34,8 @@ def _format_report_dict(report) -> dict:
         "status": report.status,
         "priority_score": report.priority_score,
         "priority_level": report.priority_level,
+        "assessment": getattr(report, "assessment_json", None) or getattr(report, "assessment", None),
+        "priority_assessment": getattr(report, "priority_assessment_json", None) or getattr(report, "priority_assessment", None),
         "created_at": report.created_at.isoformat() + "Z" if report.created_at else None,
         "updated_at": report.updated_at.isoformat() + "Z" if report.updated_at else None,
     }

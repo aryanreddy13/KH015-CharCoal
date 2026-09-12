@@ -26,6 +26,7 @@ import {
   ShieldAlert,
 } from 'lucide-react';
 import { Report } from '../types';
+import { ServicesNeededStack } from '../components/ServicesNeededStack';
 
 export const ReportsPage: React.FC = () => {
   const {
@@ -362,6 +363,11 @@ export const ReportsPage: React.FC = () => {
                   <p className="text-xs text-slate-100 leading-relaxed font-sans bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/80 mb-3">
                     "{report.description || 'No description provided.'}"
                   </p>
+
+                  {/* Services Needed Stack */}
+                  <div className="mb-3">
+                    <ServicesNeededStack report={report} variant="full" />
+                  </div>
 
                   {/* Evidence Photo Preview if present */}
                   {report.photo_url && (
