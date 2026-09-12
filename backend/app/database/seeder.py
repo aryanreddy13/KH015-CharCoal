@@ -98,13 +98,103 @@ def seed_database(db: Session):
     db.commit()
 
 
-    # Check if full database is already seeded
-    existing_zones_count = db.query(Zone).count()
-    if existing_zones_count > 0:
-        logger.info(f"Database already contains {existing_zones_count} zones. Skipping seed.")
+    # 3. Base Pan-India Disaster Operational Zones
+    pan_india_zones_info = [
+        {
+            "key": "ZONE_A",
+            "name": "Zone 1 - Brahmaputra Basin (Assam & NE)",
+            "disaster_type": "Flood",
+            "overall_severity": 9.6,
+            "affected_people": 450,
+            "status": "Critical",
+            "lat": 26.1445,
+            "lng": 91.7362,
+            "needs": [
+                {"resource_type": "Rescue", "qty_req": 25, "qty_ful": 10, "sev": 9.8, "pri": 9.8, "status": "CRITICAL"},
+                {"resource_type": "Medical", "qty_req": 20, "qty_ful": 8, "sev": 9.4, "pri": 9.4, "status": "CRITICAL"},
+                {"resource_type": "Food", "qty_req": 100, "qty_ful": 40, "sev": 7.1, "pri": 7.1, "status": "IN_PROGRESS"},
+            ],
+        },
+        {
+            "key": "ZONE_B",
+            "name": "Zone 2 - Western Coastal Sector (Mumbai & Konkan)",
+            "disaster_type": "Flood",
+            "overall_severity": 9.2,
+            "affected_people": 380,
+            "status": "Critical",
+            "lat": 19.0760,
+            "lng": 72.8777,
+            "needs": [
+                {"resource_type": "Medical", "qty_req": 30, "qty_ful": 12, "sev": 9.5, "pri": 9.5, "status": "CRITICAL"},
+                {"resource_type": "Shelter", "qty_req": 40, "qty_ful": 15, "sev": 9.0, "pri": 9.0, "status": "CRITICAL"},
+            ],
+        },
+        {
+            "key": "ZONE_C",
+            "name": "Zone 3 - Western Ghats Landslide Sector (Wayanad & Nilgiris)",
+            "disaster_type": "Landslide",
+            "overall_severity": 8.6,
+            "affected_people": 250,
+            "status": "High",
+            "lat": 11.6854,
+            "lng": 76.1320,
+            "needs": [
+                {"resource_type": "Rescue", "qty_req": 35, "qty_ful": 15, "sev": 8.8, "pri": 8.8, "status": "CRITICAL"},
+                {"resource_type": "Medical", "qty_req": 25, "qty_ful": 10, "sev": 8.2, "pri": 8.2, "status": "IN_PROGRESS"},
+            ],
+        },
+        {
+            "key": "ZONE_D",
+            "name": "Zone 4 - Bay of Bengal Cyclone Corridor (Puri & Sundarbans)",
+            "disaster_type": "Cyclone",
+            "overall_severity": 7.8,
+            "affected_people": 180,
+            "status": "High",
+            "lat": 19.8135,
+            "lng": 85.8312,
+            "needs": [
+                {"resource_type": "Shelter", "qty_req": 50, "qty_ful": 20, "sev": 7.8, "pri": 7.8, "status": "IN_PROGRESS"},
+                {"resource_type": "Water", "qty_req": 80, "qty_ful": 30, "sev": 7.4, "pri": 7.4, "status": "IN_PROGRESS"},
+            ],
+        },
+        {
+            "key": "ZONE_E",
+            "name": "Zone 5 - Himalayan Cloudburst Sector (Chamoli & Yamuna)",
+            "disaster_type": "Landslide",
+            "overall_severity": 6.5,
+            "affected_people": 120,
+            "status": "Moderate",
+            "lat": 30.5526,
+            "lng": 79.5658,
+            "needs": [
+                {"resource_type": "Rescue", "qty_req": 20, "qty_ful": 10, "sev": 6.5, "pri": 6.5, "status": "IN_PROGRESS"},
+                {"resource_type": "Medical", "qty_req": 15, "qty_ful": 8, "sev": 6.0, "pri": 6.0, "status": "IN_PROGRESS"},
+            ],
+        },
+    ]
+
+    # Check if database already has zones and upgrade them to Pan-India if they are only Delhi
+    existing_zones = db.query(Zone).all()
+    if existing_zones:
+        # Check if all existing zones are concentrated in Delhi (lat ~ 28.x)
+        all_delhi = all(27.5 <= z.latitude <= 29.5 for z in existing_zones)
+        if all_delhi and len(existing_zones) <= len(pan_india_zones_info):
+            logger.info("Migrating existing Delhi-centric zones to Pan-India operational sectors...")
+            for idx, zone in enumerate(existing_zones):
+                if idx < len(pan_india_zones_info):
+                    info = pan_india_zones_info[idx]
+                    zone.name = info["name"]
+                    zone.disaster_type = info["disaster_type"]
+                    zone.latitude = info["lat"]
+                    zone.longitude = info["lng"]
+                    zone.overall_severity = info["overall_severity"]
+                    zone.affected_people = info["affected_people"]
+                    zone.status = info["status"]
+            db.commit()
+            logger.info("Pan-India zones migration completed successfully.")
         return
 
-    logger.info("Starting database seed with 5 zones, agencies, resources, allocations, and alerts...")
+    logger.info("Starting database seed with 5 Pan-India zones, agencies, resources, allocations, and alerts...")
 
     agency_objs = {a.name: a for a in db.query(Agency).all()}
 
@@ -118,86 +208,7 @@ def seed_database(db: Session):
     db.add(commander)
     db.flush()
 
-    # 3. Exactly 5 Zones
-    # ZONE A: Flood, Severity 9.6, 350 affected, Critical, Rescue 9.8, Medical 9.4, Food 7.1
-    # ZONE B: Earthquake, Severity 9.1, 280 affected, Critical, Medical 9.5, Shelter 9.0
-    # ZONE C: Flood, Severity 7.4, 150 affected, High, Food 7.8, Water 7.2
-    # ZONE D: Cyclone, Severity 5.8, 100 affected, Moderate, Shelter 6.0, Medical 5.5
-    # ZONE E: Flood, Severity 3.2, 50 affected, Low, Food 3.5, Water 3.0
-
-    zones_info = [
-        {
-            "key": "ZONE_A",
-            "name": "Zone A - Riverfront & Central Metro",
-            "disaster_type": "Flood",
-            "overall_severity": 9.6,
-            "affected_people": 350,
-            "status": "Critical",
-            "lat": 28.6139,
-            "lng": 77.2090,
-            "needs": [
-                {"resource_type": "Rescue", "qty_req": 25, "qty_ful": 10, "sev": 9.8, "pri": 9.8, "status": "CRITICAL"},
-                {"resource_type": "Medical", "qty_req": 20, "qty_ful": 8, "sev": 9.4, "pri": 9.4, "status": "CRITICAL"},
-                {"resource_type": "Food", "qty_req": 100, "qty_ful": 40, "sev": 7.1, "pri": 7.1, "status": "IN_PROGRESS"},
-            ],
-        },
-        {
-            "key": "ZONE_B",
-            "name": "Zone B - Foothills & Industrial Belt",
-            "disaster_type": "Earthquake",
-            "overall_severity": 9.1,
-            "affected_people": 280,
-            "status": "Critical",
-            "lat": 28.5355,
-            "lng": 77.3910,
-            "needs": [
-                {"resource_type": "Medical", "qty_req": 30, "qty_ful": 12, "sev": 9.5, "pri": 9.5, "status": "CRITICAL"},
-                {"resource_type": "Shelter", "qty_req": 40, "qty_ful": 15, "sev": 9.0, "pri": 9.0, "status": "CRITICAL"},
-            ],
-        },
-        {
-            "key": "ZONE_C",
-            "name": "Zone C - Coastal Highway Corridor",
-            "disaster_type": "Flood",
-            "overall_severity": 7.4,
-            "affected_people": 150,
-            "status": "High",
-            "lat": 28.7041,
-            "lng": 77.1025,
-            "needs": [
-                {"resource_type": "Food", "qty_req": 60, "qty_ful": 20, "sev": 7.8, "pri": 7.8, "status": "IN_PROGRESS"},
-                {"resource_type": "Water", "qty_req": 80, "qty_ful": 30, "sev": 7.2, "pri": 7.2, "status": "IN_PROGRESS"},
-            ],
-        },
-        {
-            "key": "ZONE_D",
-            "name": "Zone D - Eastern Ridge Communities",
-            "disaster_type": "Cyclone",
-            "overall_severity": 5.8,
-            "affected_people": 100,
-            "status": "Moderate",
-            "lat": 28.4595,
-            "lng": 77.0266,
-            "needs": [
-                {"resource_type": "Shelter", "qty_req": 20, "qty_ful": 10, "sev": 6.0, "pri": 6.0, "status": "IN_PROGRESS"},
-                {"resource_type": "Medical", "qty_req": 15, "qty_ful": 8, "sev": 5.5, "pri": 5.5, "status": "IN_PROGRESS"},
-            ],
-        },
-        {
-            "key": "ZONE_E",
-            "name": "Zone E - South Agricultural District",
-            "disaster_type": "Flood",
-            "overall_severity": 3.2,
-            "affected_people": 50,
-            "status": "Low",
-            "lat": 28.6692,
-            "lng": 77.4538,
-            "needs": [
-                {"resource_type": "Food", "qty_req": 30, "qty_ful": 20, "sev": 3.5, "pri": 3.5, "status": "IN_PROGRESS"},
-                {"resource_type": "Water", "qty_req": 40, "qty_ful": 30, "sev": 3.0, "pri": 3.0, "status": "IN_PROGRESS"},
-            ],
-        },
-    ]
+    zones_info = pan_india_zones_info
 
     zone_objs = {}
     need_objs = {}

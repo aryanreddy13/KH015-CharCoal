@@ -53,8 +53,8 @@ function createSeverityMarkerIcon(zone: Zone, isSelected: boolean) {
 const MapController: React.FC<{ selectedZone?: Zone | null }> = ({ selectedZone }) => {
   const map = useMap();
   useEffect(() => {
-    if (selectedZone) {
-      map.flyTo([selectedZone.latitude, selectedZone.longitude], 12, { duration: 1.2 });
+    if (selectedZone && selectedZone.latitude && selectedZone.longitude) {
+      map.flyTo([selectedZone.latitude, selectedZone.longitude], 9, { duration: 1.2 });
     }
   }, [selectedZone, map]);
 
@@ -62,8 +62,8 @@ const MapController: React.FC<{ selectedZone?: Zone | null }> = ({ selectedZone 
 };
 
 export const DisasterMap: React.FC<DisasterMapProps> = ({ zones, selectedZoneId, onSelectZone }) => {
-  // Default map center
-  const defaultCenter: [number, number] = [28.6139, 77.2090];
+  // Default map center: Geographical Center of India
+  const defaultCenter: [number, number] = [22.9734, 78.6569];
   const selectedZone = zones.find((z) => z.id === selectedZoneId) || null;
 
   const getDisasterIcon = (type: string) => {
@@ -84,8 +84,10 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({ zones, selectedZoneId,
   return (
     <div className="relative w-full h-full min-h-[380px] rounded-xl overflow-hidden border border-ops-border shadow-inner bg-slate-950">
       <MapContainer
-        center={defaultCenter}
-        zoom={11}
+        center={selectedZone ? [selectedZone.latitude, selectedZone.longitude] : defaultCenter}
+        zoom={selectedZone ? 8 : 5}
+        minZoom={4}
+        maxZoom={18}
         scrollWheelZoom={true}
         style={{ width: '100%', height: '100%', minHeight: '380px' }}
       >

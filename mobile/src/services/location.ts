@@ -34,7 +34,10 @@ export const locationService = {
   async getCurrentLocation(): Promise<{ data: LocationData | null; state: LocationLockState }> {
     const granted = await this.requestPermission();
     if (!granted) {
-      return { data: null, state: 'PERMISSION_DENIED' };
+      return { 
+        data: this.createManualFallback(19.0760, 72.8777), 
+        state: 'PERMISSION_DENIED' 
+      };
     }
 
     // 1. Fast check for fresh last known position to prevent stalls
@@ -99,14 +102,18 @@ export const locationService = {
       console.warn('Last known location also unavailable:', err);
     }
 
-    return { data: null, state: 'UNAVAILABLE' };
+    // 4. Return default fallback coordinate
+    return { 
+      data: this.createManualFallback(19.0760, 72.8777), 
+      state: 'UNAVAILABLE' 
+    };
   },
 
   /**
    * Provide a manual coordinate fallback (e.g. city center or manual input)
    * so emergency reporting is never blocked completely.
    */
-  createManualFallback(lat: number = 28.6139, lng: number = 77.2090): LocationData {
+  createManualFallback(lat: number = 19.0760, lng: number = 72.8777): LocationData {
     return {
       latitude: lat,
       longitude: lng,

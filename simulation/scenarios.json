@@ -1,27 +1,67 @@
 {
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "coverage": "Pan-India",
   "scenarios": [
     {
-      "id": "scenario_01_flash_flood_surge",
-      "name": "Monsoon Flash Flood Surge (Zone A)",
-      "target_zone": "Zone A - Riverfront & Central Metro",
-      "severity_increase": 0.4,
-      "casualty_surge": 75,
-      "recommended_action": "Deploy Amphibious Rescue and Medical units immediately"
+      "id": "scenario_01_wayanad_landslide",
+      "name": "Wayanad Western Ghats Landslide & Hill Inundation",
+      "region": "Kerala",
+      "target_zone": "Western Ghats Landslide Sector (Wayanad)",
+      "disaster_type": "Landslide",
+      "severity": 9.8,
+      "casualty_surge": 420,
+      "recommended_action": "Deploy NDRF Extrication, Heavy Earthmovers, and Mountain Air Triage"
     },
     {
-      "id": "scenario_02_road_collapse",
-      "name": "NH-24 Corridor Blockage",
-      "target_zone": "Zone B - Foothills & Industrial Belt",
-      "delay_minutes": 25,
-      "recommended_action": "Reroute Emergency Care convoy via Western Bypass"
+      "id": "scenario_02_mumbai_cyclone_surge",
+      "name": "Mumbai & Konkan Coast Tidal Surge & Urban Inundation",
+      "region": "Maharashtra",
+      "target_zone": "Western Coastal Sector (Mumbai & Konkan)",
+      "disaster_type": "Flood",
+      "severity": 9.5,
+      "casualty_surge": 550,
+      "recommended_action": "Deploy Inflatable Motorized Rescue Fleets and High-Capacity Dewatering Convoys"
     },
     {
-      "id": "scenario_03_medical_depletion",
-      "name": "Zone A Critical Triage Depletion",
-      "target_zone": "Zone A - Riverfront & Central Metro",
-      "alert_type": "CRITICAL_SHORTAGE",
-      "recommended_action": "Inter-agency inventory transfer from NGO Beta"
+      "id": "scenario_03_assam_brahmaputra_flood",
+      "name": "Assam Brahmaputra River Basin Embankment Breach",
+      "region": "Assam",
+      "target_zone": "Brahmaputra Flood Basin (Assam)",
+      "disaster_type": "Flood",
+      "severity": 9.7,
+      "casualty_surge": 680,
+      "recommended_action": "Mobilize Amphibious Craft, Potable Water Purifiers, and Medical Rations"
+    },
+    {
+      "id": "scenario_04_odisha_super_cyclone",
+      "name": "Bay of Bengal Super Cyclone Landfall (Puri & Sundarbans)",
+      "region": "Odisha & West Bengal",
+      "target_zone": "Bay of Bengal Cyclone Corridor (Puri & Sundarbans)",
+      "disaster_type": "Cyclone",
+      "severity": 9.4,
+      "casualty_surge": 480,
+      "recommended_action": "Inter-agency inventory transfer for emergency tarp shelters and surgical units"
+    },
+    {
+      "id": "scenario_05_chamoli_cloudburst",
+      "name": "Himalayan Alaknanda Cloudburst & Flash Mudflow",
+      "region": "Uttarakhand",
+      "target_zone": "Himalayan Cloudburst Sector (Chamoli & Joshimath)",
+      "disaster_type": "Landslide",
+      "severity": 9.2,
+      "casualty_surge": 310,
+      "recommended_action": "Deploy High-Altitude SDRF units and Trauma Surgeons"
+    },
+    {
+      "id": "scenario_06_chennai_deluge",
+      "name": "Chennai Adyar Basin Urban Deluge",
+      "region": "Tamil Nadu",
+      "target_zone": "Coromandel Coastal Corridor (Chennai)",
+      "disaster_type": "Flood",
+      "severity": 8.9,
+      "casualty_surge": 390,
+      "recommended_action": "Dispatch drinking water tankers and specialized urban search dinghies"
     }
   ]
 }
+
