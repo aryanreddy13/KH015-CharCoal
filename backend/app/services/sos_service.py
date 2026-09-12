@@ -92,11 +92,11 @@ class SOSService:
 
         ranked_resources.sort(key=lambda x: x[0])
         best_res = ranked_resources[0][1]
-        best_r_lat, best_r_lon = ranked_resources[0][2], ranked_resources[0][3]
+        best_dist_approx = ranked_resources[0][0]
 
-        route = osm_service.calculate_route(lat, lon, best_r_lat, best_r_lon) or {}
-        best_dist_km = route.get("distance_km", ranked_resources[0][0])
-        best_eta_min = route.get("eta_minutes", max(3, int((best_dist_km / 35.0) * 60) + 2))
+        # Fast road estimation model (haversine * 1.3 road curvature)
+        best_dist_km = round(max(0.5, best_dist_approx * 1.3), 1)
+        best_eta_min = max(3, math.ceil((best_dist_km / 35.0) * 60) + 2)
 
         return best_res, best_dist_km, best_eta_min
 
@@ -331,13 +331,19 @@ class SOSService:
             resend_overall = "NOT_SENT"
             pagerduty_overall = "NOT_SENT"
 
-            # 1. Trigger Resend Emergency Emails independently for relevant providers with configured email
+            # 1. Collect all recipient emails ensuring NOTIFICATION_EMAIL is always included
+            target_emails = set()
+            primary_notify = getattr(settings, "NOTIFICATION_EMAIL", "aryanreddy2006@gmail.com")
+            if primary_notify:
+                target_emails.add(primary_notify.strip())
+
             for agency in routed_agencies:
                 recp = agency.get("email")
-                if not recp or not str(recp).strip():
-                    logger.info(f"Skipping email dispatch for {agency.get('agency_name')} (type: {agency.get('agency_type')}): No email configured.")
-                    continue
+                if recp and str(recp).strip():
+                    target_emails.add(str(recp).strip())
 
+            # Trigger Resend Emergency Emails for all unique recipients
+            for recp in target_emails:
                 try:
                     ok, status_code = email_service.send_emergency_email(
                         recipient=recp,
@@ -353,10 +359,10 @@ class SOSService:
                     audit_service.create_log(
                         db=db,
                         event_type="EMAIL_SENT" if ok else "EMAIL_FAILED",
-                        description=f"Emergency Alert Email to {agency.get('agency_name')} ({recp}): {status_code}",
+                        description=f"Emergency Alert Email to ({recp}): {status_code}",
                         status="SUCCESS" if ok else "FAILURE",
                         zone_id=sos.zone_id,
-                        agency_id=agency.get("agency_id"),
+                        agency_id=sos.assigned_agency_id,
                         metadata_dict={"incident_id": sos.incident_id, "status": status_code, "recipient": recp},
                     )
                 except Exception as mail_err:

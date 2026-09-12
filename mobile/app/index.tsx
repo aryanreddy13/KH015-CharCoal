@@ -156,7 +156,7 @@ export default function HomeScreen() {
         {/* Top App Header */}
         <View style={styles.headerRow}>
           <View>
-            <Text style={styles.badgeText}>SANJIVINI EMERGENCY</Text>
+            <Text style={styles.badgeText}>SANJIVANI EMERGENCY</Text>
             <Text style={styles.appTitle}>DISASTER ASSISTANCE</Text>
           </View>
 

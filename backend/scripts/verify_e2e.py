@@ -43,7 +43,7 @@ def test_endpoint(name, method, path, expected_status=[200, 201], payload=None):
         return False, None
 
 def run_all_tests():
-    print_header("SANJIVINI DISASTER PLATFORM - END-TO-END API TEST SUITE")
+    print_header("SANJIVANI DISASTER PLATFORM - END-TO-END API TEST SUITE")
     
     results = []
 

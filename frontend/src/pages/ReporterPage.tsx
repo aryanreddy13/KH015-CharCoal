@@ -345,7 +345,7 @@ export const ReporterPage: React.FC = () => {
       </div>
 
       <div className="text-center text-[10px] text-slate-400 mt-4">
-        Sanjivini Disaster Response Network • 24/7 National Coordination Grid
+        Sanjivani Disaster Response Network • 24/7 National Coordination Grid
       </div>
     </div>
   );

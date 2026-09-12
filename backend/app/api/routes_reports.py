@@ -1,11 +1,16 @@
 from typing import List
-from fastapi import APIRouter, Depends
+import logging
+from fastapi import APIRouter, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 from app.database.session import get_db
 from app.services.report_service import report_service
 from app.services.audit_service import audit_service
+from app.services.email_service import email_service
 from app.schemas.schemas import ReportResponse, ReportCreate
 from app.websocket.connection_manager import manager
+from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/reports", tags=["Citizen Reports"])
 
@@ -16,10 +21,27 @@ def list_reports(limit: int = 100, db: Session = Depends(get_db)):
     """
     return report_service.get_all_reports(db, limit=limit)
 
+def _dispatch_report_email_background(report_dict: dict, photo_url: str = None):
+    try:
+        primary_recipient = getattr(settings, "NOTIFICATION_EMAIL", "aryanreddy2006@gmail.com")
+        if primary_recipient:
+            email_service.send_report_email(
+                recipient=primary_recipient,
+                report_data=report_dict,
+                photo_url=photo_url,
+            )
+    except Exception as e:
+        logger.error(f"Failed to dispatch citizen report email: {e}")
+
 @router.post("", response_model=ReportResponse)
-def create_citizen_report(report_in: ReportCreate, db: Session = Depends(get_db)):
+def create_citizen_report(
+    report_in: ReportCreate,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
     """
     Submits a new citizen emergency report from the mobile reporter interface.
+    Broadcasts real-time WebSockets and dispatches emergency email with evidence photo to disaster authorities.
     """
     report = report_service.create_report(db, report_in)
 
@@ -35,7 +57,31 @@ def create_citizen_report(report_in: ReportCreate, db: Session = Depends(get_db)
             "injured": report.injured_people,
             "missing": report.missing_people,
             "coords": [report.latitude, report.longitude],
+            "has_photo": bool(report.photo_url),
         },
+    )
+
+    report_dict = {
+        "id": report.id,
+        "disaster_type": report.disaster_type,
+        "description": report.description,
+        "people_affected": report.people_affected,
+        "injured_people": report.injured_people,
+        "missing_people": report.missing_people,
+        "latitude": report.latitude,
+        "longitude": report.longitude,
+        "location_text": getattr(report, "location_text", None) or f"{report.latitude:.4f}, {report.longitude:.4f}",
+        "reporter_name": getattr(report, "reporter_name", "Citizen"),
+        "reporter_phone": getattr(report, "reporter_phone", None),
+        "status": report.status,
+        "created_at": report.created_at.isoformat() + "Z",
+    }
+
+    # Dispatch email with attached evidence photo in background
+    background_tasks.add_task(
+        _dispatch_report_email_background,
+        report_dict=report_dict,
+        photo_url=report.photo_url or getattr(report_in, "photo_url", None),
     )
 
     # Broadcast real-time WebSocket events asynchronously

@@ -42,7 +42,7 @@ export const apiService = {
   async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const baseUrl = await this.getBaseUrl();
     const url = `${baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
-    console.log(`[Sanjivini API] -> ${options.method || 'GET'} ${url}`);
+    console.log(`[Sanjivani API] -> ${options.method || 'GET'} ${url}`);
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 20000);
@@ -82,7 +82,7 @@ export const apiService = {
       if (err instanceof ApiError) {
         throw err;
       }
-      throw new ApiError(err.message || 'Unable to reach Sanjivini emergency server.', 0);
+      throw new ApiError(err.message || 'Unable to reach Sanjivani emergency server.', 0);
     }
   },
 
