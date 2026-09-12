@@ -8,6 +8,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from app.models.models import SOSEvent, Zone, Alert, AuditLog, Resource, Agency
 from app.schemas.schemas import SOSCreate
+from app.config import settings
 from app.agents.coordination_agent import coordination_agent
 from app.services.email_service import email_service
 from app.services.pagerduty_service import pagerduty_service

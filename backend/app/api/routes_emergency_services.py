@@ -29,8 +29,8 @@ def get_nearby_services(
         radius_meters = int(radius_km * 1000)
 
     # Use OpenStreetMap service with live GPS coordinates if provided
-    lat = latitude if latitude is not None else 28.6139
-    lon = longitude if longitude is not None else 77.2090
+    lat = latitude if latitude is not None else 19.0760
+    lon = longitude if longitude is not None else 72.8777
 
     raw_services = osm_service.get_nearby_emergency_services(
         lat=lat,

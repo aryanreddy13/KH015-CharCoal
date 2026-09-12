@@ -164,7 +164,7 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
   resources,
   allocations,
 }) => {
-  const defaultCenter: [number, number] = [28.6139, 77.2090];
+  const defaultCenter: [number, number] = [19.0760, 72.8777];
   const [show1kmRadius, setShow1kmRadius] = useState(true);
   const [showSupplyRoutes, setShowSupplyRoutes] = useState(true);
   const [showSupplies, setShowSupplies] = useState(true);
@@ -188,7 +188,7 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
     return null;
   }, [zones, selectedZoneId]);
 
-  // Generate realistic supply stations near critical zones
+  // Generate realistic supply stations near critical zones in Mumbai
   const supplyStations: SupplyStation[] = useMemo(() => {
     if (!criticalZone) return [];
 
@@ -198,50 +198,50 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
     return [
       {
         id: `depot-medical-${criticalZone.id}`,
-        name: 'District Trauma & Medical Reserve Hub',
+        name: 'BMC Central Trauma & KEM Reserve Hub',
         category: 'MEDICAL',
         resource_type: 'Medical Trauma Kits & Plasma',
         stock_quantity: 450,
         unit: 'Kits',
         latitude: lat + 0.024,
         longitude: lon - 0.018,
-        address: 'National Health Emergency Depot',
+        address: 'Parel / Dadar Medical Corridor Depot',
         phone: '108',
       },
       {
         id: `depot-water-${criticalZone.id}`,
-        name: 'State Potable Water & Food Stockpile',
+        name: 'Wadala & Kurla Potable Water Stockpile',
         category: 'FOOD_WATER',
         resource_type: 'Purified Water & Emergency Rations',
         stock_quantity: 2800,
         unit: 'Liters / Packs',
         latitude: lat - 0.021,
         longitude: lon + 0.022,
-        address: 'Civil Supplies Regional Warehouse',
+        address: 'Civil Supplies Regional Warehouse (Wadala)',
         phone: '1077',
       },
       {
         id: `depot-rescue-${criticalZone.id}`,
-        name: 'NDRF Disaster Rescue Mobilization Center',
+        name: 'Mumbai Fire Brigade & NDRF Mobilization Center',
         category: 'RESCUE',
-        resource_type: 'Heavy Rescue Tools & Inflatable Boats',
+        resource_type: 'Heavy Rescue Boats & Inflatable Rafts',
         stock_quantity: 12,
         unit: 'Rescue Units',
         latitude: lat + 0.018,
         longitude: lon + 0.026,
-        address: 'NDRF Station Sector 4',
-        phone: '1070',
+        address: 'BKC / Byculla Fire Command Post',
+        phone: '101',
       },
       {
         id: `depot-ambulance-${criticalZone.id}`,
-        name: 'Rapid Response Ambulance & Paramedic Base',
+        name: '108 Rapid Response Ambulance & ICU Base',
         category: 'AMBULANCE',
         resource_type: 'ICU Mobile Ambulances',
         stock_quantity: 6,
         unit: 'Vehicles',
         latitude: lat - 0.019,
         longitude: lon - 0.023,
-        address: 'Emergency Transit Corridor Base',
+        address: 'Western & Eastern Express Transit Base',
         phone: '102',
       },
     ];

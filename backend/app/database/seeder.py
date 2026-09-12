@@ -15,6 +15,96 @@ from app.models.models import (
 
 logger = logging.getLogger(__name__)
 
+# Fixed Primary Inventory Resources per specifications (Mumbai Depots):
+# NGO: FOOD (500), WATER (1000), SHELTER (100), MEDICINE (250)
+# FIRE: RESCUE (10)
+# MEDICAL: AMBULANCE (8)
+primary_inventory = [
+    {"agency_type": "NGO", "resource_type": "FOOD", "name": "Emergency Food Kits", "total": 500, "unit": "Kits", "lat": 19.0657, "lng": 72.8780},
+    {"agency_type": "NGO", "resource_type": "WATER", "name": "Potable Water Units", "total": 1000, "unit": "Units", "lat": 19.0200, "lng": 72.8600},
+    {"agency_type": "NGO", "resource_type": "SHELTER", "name": "Emergency Shelter Spaces", "total": 100, "unit": "Spaces", "lat": 19.1860, "lng": 72.8485},
+    {"agency_type": "NGO", "resource_type": "MEDICINE", "name": "Trauma Medicine Kits", "total": 250, "unit": "Kits", "lat": 19.0020, "lng": 72.8420},
+    {"agency_type": "FIRE_RESCUE", "resource_type": "RESCUE", "name": "Rapid Water & Extrication Rescue Units", "total": 10, "unit": "Units", "lat": 18.9750, "lng": 72.8250},
+    {"agency_type": "MEDICAL", "resource_type": "AMBULANCE", "name": "Emergency ICU Ambulances", "total": 8, "unit": "Ambulances", "lat": 19.0600, "lng": 72.8650},
+]
+
+# Base Mumbai Metropolitan Region (MMR) Disaster Operational Zones
+mumbai_zones_info = [
+    {
+        "key": "ZONE_A",
+        "name": "Zone 1 - Kurla & Mithi River Deluge Basin",
+        "disaster_type": "Flood",
+        "overall_severity": 9.6,
+        "affected_people": 580,
+        "status": "Critical",
+        "lat": 19.0657,
+        "lng": 72.8780,
+        "needs": [
+            {"resource_type": "Rescue", "qty_req": 25, "qty_ful": 10, "sev": 9.8, "pri": 9.8, "status": "CRITICAL"},
+            {"resource_type": "Medical", "qty_req": 20, "qty_ful": 8, "sev": 9.4, "pri": 9.4, "status": "CRITICAL"},
+            {"resource_type": "Food", "qty_req": 100, "qty_ful": 40, "sev": 7.1, "pri": 7.1, "status": "IN_PROGRESS"},
+        ],
+    },
+    {
+        "key": "ZONE_B",
+        "name": "Zone 2 - Hindmata, Dadar & Parel Bowl",
+        "disaster_type": "Flood",
+        "overall_severity": 9.3,
+        "affected_people": 420,
+        "status": "Critical",
+        "lat": 19.0178,
+        "lng": 72.8478,
+        "needs": [
+            {"resource_type": "Medical", "qty_req": 30, "qty_ful": 12, "sev": 9.5, "pri": 9.5, "status": "CRITICAL"},
+            {"resource_type": "Shelter", "qty_req": 40, "qty_ful": 15, "sev": 9.0, "pri": 9.0, "status": "CRITICAL"},
+        ],
+    },
+    {
+        "key": "ZONE_C",
+        "name": "Zone 3 - Malad-Goregaon Hillside & Slopes",
+        "disaster_type": "Landslide",
+        "overall_severity": 9.7,
+        "affected_people": 350,
+        "status": "Critical",
+        "lat": 19.1860,
+        "lng": 72.8485,
+        "needs": [
+            {"resource_type": "Rescue", "qty_req": 35, "qty_ful": 15, "sev": 9.7, "pri": 9.7, "status": "CRITICAL"},
+            {"resource_type": "Medical", "qty_req": 25, "qty_ful": 10, "sev": 8.8, "pri": 8.8, "status": "IN_PROGRESS"},
+        ],
+    },
+    {
+        "key": "ZONE_D",
+        "name": "Zone 4 - Ghatkopar & Vikhroli Industrial Corridor",
+        "disaster_type": "Chemical Leak",
+        "overall_severity": 9.4,
+        "affected_people": 460,
+        "status": "Critical",
+        "lat": 19.0860,
+        "lng": 72.9090,
+        "needs": [
+            {"resource_type": "Shelter", "qty_req": 50, "qty_ful": 20, "sev": 7.8, "pri": 7.8, "status": "IN_PROGRESS"},
+            {"resource_type": "Water", "qty_req": 80, "qty_ful": 30, "sev": 7.4, "pri": 7.4, "status": "IN_PROGRESS"},
+        ],
+    },
+    {
+        "key": "ZONE_E",
+        "name": "Zone 5 - Colaba & Marine Drive Coastal Sector",
+        "disaster_type": "Cyclone",
+        "overall_severity": 9.2,
+        "affected_people": 290,
+        "status": "Critical",
+        "lat": 18.9220,
+        "lng": 72.8347,
+        "needs": [
+            {"resource_type": "Rescue", "qty_req": 20, "qty_ful": 10, "sev": 9.2, "pri": 9.2, "status": "CRITICAL"},
+            {"resource_type": "Medical", "qty_req": 15, "qty_ful": 8, "sev": 8.0, "pri": 8.0, "status": "IN_PROGRESS"},
+        ],
+    },
+]
+pan_india_zones_info = mumbai_zones_info
+
+
 def seed_database(db: Session):
     from app.config import settings
 
@@ -44,19 +134,6 @@ def seed_database(db: Session):
             agency_objs[item["name"]] = existing_ag
     db.commit()
 
-    # Fixed Primary Inventory Resources per specifications:
-    # NGO: FOOD (500), WATER (1000), SHELTER (100), MEDICINE (250)
-    # FIRE: RESCUE (10)
-    # MEDICAL: AMBULANCE (8)
-    primary_inventory = [
-        {"agency_type": "NGO", "resource_type": "FOOD", "name": "Emergency Food Kits", "total": 500, "unit": "Kits", "lat": 28.6800, "lng": 77.1500},
-        {"agency_type": "NGO", "resource_type": "WATER", "name": "Potable Water Units", "total": 1000, "unit": "Units", "lat": 28.6700, "lng": 77.1600},
-        {"agency_type": "NGO", "resource_type": "SHELTER", "name": "Emergency Shelter Spaces", "total": 100, "unit": "Spaces", "lat": 28.6600, "lng": 77.1300},
-        {"agency_type": "NGO", "resource_type": "MEDICINE", "name": "Trauma Medicine Kits", "total": 250, "unit": "Kits", "lat": 28.5600, "lng": 77.2100},
-        {"agency_type": "FIRE_RESCUE", "resource_type": "RESCUE", "name": "Rapid Water & Extrication Rescue Units", "total": 10, "unit": "Units", "lat": 28.6300, "lng": 77.2150},
-        {"agency_type": "MEDICAL", "resource_type": "AMBULANCE", "name": "Emergency ICU Ambulances", "total": 8, "unit": "Ambulances", "lat": 28.5700, "lng": 77.2200},
-    ]
-
     from sqlalchemy import func
 
     for inv in primary_inventory:
@@ -78,7 +155,7 @@ def seed_database(db: Session):
                 reserved_quantity=0,
                 allocated_quantity=0,
                 unit=inv["unit"],
-                location="Central Regional Depot",
+                location="Mumbai Central Regional Depot",
                 latitude=inv["lat"],
                 longitude=inv["lng"],
                 status="AVAILABLE",
@@ -86,103 +163,29 @@ def seed_database(db: Session):
             db.add(new_res)
             db.flush()
         else:
-            # Sync total and available if needed
+            # Sync total, coordinates, and available
             existing_res.name = inv["name"]
             existing_res.resource_type = inv["resource_type"]
             existing_res.unit = inv["unit"]
             existing_res.total_quantity = inv["total"]
+            existing_res.latitude = inv["lat"]
+            existing_res.longitude = inv["lng"]
             if existing_res.available_quantity is None or existing_res.available_quantity <= 1:
                 existing_res.available_quantity = inv["total"]
             existing_res.quantity = inv["total"]
             existing_res.status = "AVAILABLE"
     db.commit()
 
-
-    # 3. Base Pan-India Disaster Operational Zones
-    pan_india_zones_info = [
-        {
-            "key": "ZONE_A",
-            "name": "Zone 1 - Brahmaputra Basin (Assam & NE)",
-            "disaster_type": "Flood",
-            "overall_severity": 9.6,
-            "affected_people": 450,
-            "status": "Critical",
-            "lat": 26.1445,
-            "lng": 91.7362,
-            "needs": [
-                {"resource_type": "Rescue", "qty_req": 25, "qty_ful": 10, "sev": 9.8, "pri": 9.8, "status": "CRITICAL"},
-                {"resource_type": "Medical", "qty_req": 20, "qty_ful": 8, "sev": 9.4, "pri": 9.4, "status": "CRITICAL"},
-                {"resource_type": "Food", "qty_req": 100, "qty_ful": 40, "sev": 7.1, "pri": 7.1, "status": "IN_PROGRESS"},
-            ],
-        },
-        {
-            "key": "ZONE_B",
-            "name": "Zone 2 - Western Coastal Sector (Mumbai & Konkan)",
-            "disaster_type": "Flood",
-            "overall_severity": 9.2,
-            "affected_people": 380,
-            "status": "Critical",
-            "lat": 19.0760,
-            "lng": 72.8777,
-            "needs": [
-                {"resource_type": "Medical", "qty_req": 30, "qty_ful": 12, "sev": 9.5, "pri": 9.5, "status": "CRITICAL"},
-                {"resource_type": "Shelter", "qty_req": 40, "qty_ful": 15, "sev": 9.0, "pri": 9.0, "status": "CRITICAL"},
-            ],
-        },
-        {
-            "key": "ZONE_C",
-            "name": "Zone 3 - Western Ghats Landslide Sector (Wayanad & Nilgiris)",
-            "disaster_type": "Landslide",
-            "overall_severity": 8.6,
-            "affected_people": 250,
-            "status": "High",
-            "lat": 11.6854,
-            "lng": 76.1320,
-            "needs": [
-                {"resource_type": "Rescue", "qty_req": 35, "qty_ful": 15, "sev": 8.8, "pri": 8.8, "status": "CRITICAL"},
-                {"resource_type": "Medical", "qty_req": 25, "qty_ful": 10, "sev": 8.2, "pri": 8.2, "status": "IN_PROGRESS"},
-            ],
-        },
-        {
-            "key": "ZONE_D",
-            "name": "Zone 4 - Bay of Bengal Cyclone Corridor (Puri & Sundarbans)",
-            "disaster_type": "Cyclone",
-            "overall_severity": 7.8,
-            "affected_people": 180,
-            "status": "High",
-            "lat": 19.8135,
-            "lng": 85.8312,
-            "needs": [
-                {"resource_type": "Shelter", "qty_req": 50, "qty_ful": 20, "sev": 7.8, "pri": 7.8, "status": "IN_PROGRESS"},
-                {"resource_type": "Water", "qty_req": 80, "qty_ful": 30, "sev": 7.4, "pri": 7.4, "status": "IN_PROGRESS"},
-            ],
-        },
-        {
-            "key": "ZONE_E",
-            "name": "Zone 5 - Himalayan Cloudburst Sector (Chamoli & Yamuna)",
-            "disaster_type": "Landslide",
-            "overall_severity": 6.5,
-            "affected_people": 120,
-            "status": "Moderate",
-            "lat": 30.5526,
-            "lng": 79.5658,
-            "needs": [
-                {"resource_type": "Rescue", "qty_req": 20, "qty_ful": 10, "sev": 6.5, "pri": 6.5, "status": "IN_PROGRESS"},
-                {"resource_type": "Medical", "qty_req": 15, "qty_ful": 8, "sev": 6.0, "pri": 6.0, "status": "IN_PROGRESS"},
-            ],
-        },
-    ]
-
-    # Check if database already has zones and upgrade them to Pan-India if they are only Delhi
+    # Check if database already has zones and upgrade them to Mumbai sectors if needed
     existing_zones = db.query(Zone).all()
     if existing_zones:
-        # Check if all existing zones are concentrated in Delhi (lat ~ 28.x)
-        all_delhi = all(27.5 <= z.latitude <= 29.5 for z in existing_zones)
-        if all_delhi and len(existing_zones) <= len(pan_india_zones_info):
-            logger.info("Migrating existing Delhi-centric zones to Pan-India operational sectors...")
+        # Check if any zone is outside Mumbai area (18.8 <= lat <= 19.5, 72.7 <= lng <= 73.2)
+        needs_migration = any(not (18.8 <= z.latitude <= 19.5 and 72.7 <= z.longitude <= 73.2) for z in existing_zones)
+        if needs_migration or len(existing_zones) <= len(mumbai_zones_info):
+            logger.info("Migrating existing zones to Mumbai Metropolitan Region operational sectors...")
             for idx, zone in enumerate(existing_zones):
-                if idx < len(pan_india_zones_info):
-                    info = pan_india_zones_info[idx]
+                if idx < len(mumbai_zones_info):
+                    info = mumbai_zones_info[idx]
                     zone.name = info["name"]
                     zone.disaster_type = info["disaster_type"]
                     zone.latitude = info["lat"]
@@ -191,10 +194,10 @@ def seed_database(db: Session):
                     zone.affected_people = info["affected_people"]
                     zone.status = info["status"]
             db.commit()
-            logger.info("Pan-India zones migration completed successfully.")
+            logger.info("Mumbai operational zones migration completed successfully.")
         return
 
-    logger.info("Starting database seed with 5 Pan-India zones, agencies, resources, allocations, and alerts...")
+    logger.info("Starting database seed with 5 Mumbai operational zones, agencies, resources, allocations, and alerts...")
 
     agency_objs = {a.name: a for a in db.query(Agency).all()}
 
@@ -241,130 +244,130 @@ def seed_database(db: Session):
             db.flush()
             need_objs[f"{z_data['key']}_{n_data['resource_type']}"] = need
 
-    # 4. Resources distributed across agencies
+    # 4. Resources distributed across agencies (Mumbai Metropolitan Region Bases)
     resources_data = [
         # Fire & Rescue
         {
             "agency": "Fire & Rescue Department",
-            "name": "Rapid Water Rescue Team 01",
+            "name": "Mumbai Fire Brigade Water Rescue Unit (Byculla HQ)",
             "type": "Rescue",
             "qty": 5,
-            "lat": 28.6300,
-            "lng": 77.2150,
+            "lat": 18.9750,
+            "lng": 72.8250,
             "status": "AVAILABLE",
             "capacity": "5 Heavy Inflatable Rafts & 15 Crew",
         },
         {
             "agency": "Fire & Rescue Department",
-            "name": "Urban Search & Rescue Team 02",
+            "name": "SDRF Urban Search & Extrication Team 02",
             "type": "Rescue",
             "qty": 8,
-            "lat": 28.6200,
-            "lng": 77.1950,
+            "lat": 19.0600,
+            "lng": 72.8700,
             "status": "ALLOCATED",
             "capacity": "8 Structural Collapse Specialists",
         },
         # City Medical Response
         {
             "agency": "City Medical Response",
-            "name": "Mobile Trauma Hospital Unit 01",
+            "name": "KEM Hospital Mobile Trauma Unit 01",
             "type": "Medical",
             "qty": 4,
-            "lat": 28.5700,
-            "lng": 77.2200,
+            "lat": 19.0020,
+            "lng": 72.8420,
             "status": "AVAILABLE",
             "capacity": "4 ICU Ambulances + Triage Tents",
         },
         {
             "agency": "City Medical Response",
-            "name": "Emergency Critical Care Team Alpha",
+            "name": "Lilavati & Hinduja Rapid Critical Care Team",
             "type": "Medical",
             "qty": 6,
-            "lat": 28.5500,
-            "lng": 77.2800,
+            "lat": 19.0520,
+            "lng": 72.8300,
             "status": "EN_ROUTE",
             "capacity": "12 Paramedics & Emergency Doctors",
         },
         {
             "agency": "City Medical Response",
-            "name": "Trauma Medicine Supply Pack A",
+            "name": "Central Medical Trauma Medicine Supply Pack A",
             "type": "Medicine",
             "qty": 200,
-            "lat": 28.5600,
-            "lng": 77.2100,
+            "lat": 19.0020,
+            "lng": 72.8420,
             "status": "AVAILABLE",
             "capacity": "200 Comprehensive Trauma Surgery Kits",
         },
         # NGO Alpha
         {
             "agency": "NGO Alpha Relief",
-            "name": "Emergency Food Supply Convoy Alpha",
+            "name": "Wadala & Kurla Emergency Food Convoy",
             "type": "Food",
             "qty": 500,
-            "lat": 28.6800,
-            "lng": 77.1500,
+            "lat": 19.0200,
+            "lng": 72.8600,
             "status": "AVAILABLE",
             "capacity": "500 Dry Ready-to-Eat Ration Boxes",
         },
         {
             "agency": "NGO Alpha Relief",
-            "name": "Potable Water Tanker Fleet (5000L)",
+            "name": "BMC Potable Water Tanker Fleet (5000L)",
             "type": "Water",
             "qty": 10,
-            "lat": 28.6700,
-            "lng": 77.1600,
+            "lat": 19.0657,
+            "lng": 72.8780,
             "status": "EN_ROUTE",
             "capacity": "10x 5000 Liters Purified Water Tankers",
         },
         {
             "agency": "NGO Alpha Relief",
-            "name": "All-Weather Family Shelter Tents",
+            "name": "Malad & Goregaon Relief Shelter Tents",
             "type": "Shelter",
             "qty": 50,
-            "lat": 28.6600,
-            "lng": 77.1300,
+            "lat": 19.1860,
+            "lng": 72.8485,
             "status": "AVAILABLE",
             "capacity": "50 Heavy-Duty 6-Person Weatherproof Tents",
         },
         # Metropolitan Police Department
         {
             "agency": "Metropolitan Police Department",
-            "name": "Tactical Evacuation & Perimeter Unit 01",
+            "name": "Mumbai Police Tactical Evacuation & Perimeter Unit",
             "type": "Rescue",
             "qty": 8,
-            "lat": 28.5900,
-            "lng": 28.5900,
+            "lat": 18.9400,
+            "lng": 72.8350,
             "status": "AVAILABLE",
             "capacity": "8 Tactical Officers, Crowd Barriers & Drones",
         },
         {
             "agency": "Metropolitan Police Department",
-            "name": "Emergency Highway Corridor Patrol 03",
+            "name": "WEH & EEH Emergency Corridor Patrol",
             "type": "Rescue",
             "qty": 4,
-            "lat": 28.6500,
-            "lng": 77.2400,
+            "lat": 19.0760,
+            "lng": 72.8777,
             "status": "AVAILABLE",
             "capacity": "4 High-Mobility Interceptors & Satellite Comms",
         },
         # Government Emergency Services
         {
             "agency": "Government Emergency Services",
-            "name": "National Disaster Response Unit 04",
+            "name": "NDRF 5th Battalion Disaster Response Unit (BKC Base)",
             "type": "Rescue",
             "qty": 12,
-            "lat": 28.6000,
-            "lng": 77.3000,
+            "lat": 19.0600,
+            "lng": 72.8650,
             "status": "ALLOCATED",
             "capacity": "12 NDRF Specialist Operatives & Drones",
         },
         {
             "agency": "Government Emergency Services",
-            "name": "Modular Emergency Shelter Pods",
+            "name": "MMRDA Modular Emergency Shelter Pods",
             "type": "Shelter",
             "qty": 80,
-            "lat": 28.6100,
-            "lng": 77.3200,
+            "lat": 19.0600,
+            "lng": 72.8650,
             "status": "AVAILABLE",
             "capacity": "80 Rapid Assembly Aluminum-Frame Pods",
         },
@@ -486,23 +489,23 @@ def seed_database(db: Session):
         {
             "zone": "ZONE_A",
             "type": "Flood",
-            "desc": "Water levels reached 6 feet along riverbanks. Over 30 families on rooftops awaiting evacuation boats.",
+            "desc": "Mithi River water levels reached 6 feet along Bail Bazar. Over 30 families on rooftops awaiting evacuation boats.",
             "affected": 45,
             "injured": 4,
             "missing": 2,
-            "lat": 28.6145,
-            "lng": 77.2085,
+            "lat": 19.0657,
+            "lng": 72.8780,
             "status": "VERIFIED",
         },
         {
             "zone": "ZONE_B",
-            "type": "Earthquake",
-            "desc": "Industrial building facade collapsed onto access road. Medical supplies needed immediately.",
+            "type": "Flood",
+            "desc": "Hindmata underpass completely inundated. Access road to KEM Hospital partially restricted.",
             "affected": 30,
             "injured": 8,
             "missing": 1,
-            "lat": 28.5360,
-            "lng": 77.3915,
+            "lat": 19.0178,
+            "lng": 72.8478,
             "status": "VERIFIED",
         },
     ]

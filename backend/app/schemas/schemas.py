@@ -140,8 +140,8 @@ class ResourceBase(BaseModel):
     allocated_quantity: int = 0
     unit: str = "Units"
     location: Optional[str] = None
-    latitude: float = 28.6139
-    longitude: float = 77.2090
+    latitude: float = 19.0760
+    longitude: float = 72.8777
     status: str = "AVAILABLE"
     capacity: Optional[str] = None
 

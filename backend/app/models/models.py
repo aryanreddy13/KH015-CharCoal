@@ -149,8 +149,8 @@ class Resource(Base):
     allocated_quantity = Column(Integer, nullable=False, default=0)
     unit = Column(String(50), default="Units")  # Kits, Liters, Tents, Ambulances, Units
     location = Column(String(255), nullable=True)
-    latitude = Column(Float, nullable=False, default=28.6139)
-    longitude = Column(Float, nullable=False, default=77.2090)
+    latitude = Column(Float, nullable=False, default=19.0760)
+    longitude = Column(Float, nullable=False, default=72.8777)
     status = Column(String(50), default="AVAILABLE")  # AVAILABLE, ALLOCATED, EN_ROUTE, DELIVERED, DEPLETED, MAINTENANCE
     capacity = Column(String(100), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
