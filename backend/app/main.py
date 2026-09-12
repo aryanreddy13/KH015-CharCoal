@@ -13,12 +13,12 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
-logger = logging.getLogger("sanjivani_backend")
+logger = logging.getLogger("sanjivini_backend")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: Create tables and auto-seed initial demo dataset
-    logger.info("Initializing Sanjivani Disaster Database schema...")
+    logger.info("Initializing Sanjivini Disaster Database schema...")
     Base.metadata.create_all(bind=engine)
     
     db = SessionLocal()
@@ -29,9 +29,9 @@ async def lifespan(app: FastAPI):
     finally:
         db.close()
     
-    logger.info("Sanjivani Command Center Backend successfully started.")
+    logger.info("Sanjivini Command Center Backend successfully started.")
     yield
-    logger.info("Sanjivani Command Center Backend shutting down...")
+    logger.info("Sanjivini Command Center Backend shutting down...")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -86,7 +86,7 @@ async def websocket_dashboard_endpoint(websocket: WebSocket):
 @app.get("/")
 def root():
     return {
-        "system": "Sanjivani - Agentic Disaster Relief & Emergency Resource Coordinator",
+        "system": "Sanjivini- Agentic Disaster Relief & Emergency Resource Coordinator",
         "status": "ONLINE",
         "docs_url": "/docs",
         "api_v1": settings.API_V1_STR,

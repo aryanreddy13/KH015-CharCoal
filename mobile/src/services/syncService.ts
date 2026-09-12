@@ -23,7 +23,7 @@ class SyncService {
       this.isOnline = connected;
 
       if (connected) {
-        console.log('[Sanjivani SyncService] Network connected. Syncing pending items...');
+        console.log('[Sanjivini SyncService] Network connected. Syncing pending items...');
         this.syncAllPending();
       }
     });
@@ -121,7 +121,7 @@ class SyncService {
           });
           sosSynced++;
         } catch (err: any) {
-          console.warn(`[Sanjivani SyncService] SOS item ${item.local_id} sync failed:`, err.message);
+          console.warn(`[Sanjivini SyncService] SOS item ${item.local_id} sync failed:`, err.message);
           await storageService.updateSOSStatus(item.local_id, 'FAILED', {
             error_message: err.message || 'Sync failed',
           });
@@ -147,7 +147,7 @@ class SyncService {
           });
           reportsSynced++;
         } catch (err: any) {
-          console.warn(`[Sanjivani SyncService] Report item ${item.local_id} sync failed:`, err.message);
+          console.warn(`[Sanjivini SyncService] Report item ${item.local_id} sync failed:`, err.message);
           await storageService.updateReportStatus(item.local_id, 'FAILED', {
             error_message: err.message || 'Sync failed',
           });

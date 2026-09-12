@@ -41,7 +41,7 @@ class OSMService:
     DEFAULT_NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
     DEFAULT_OVERPASS_URL = "https://overpass-api.de/api/interpreter"
 
-    USER_AGENT = "Sanjivani-DisasterRelief/1.0 (contact: admin@sanjivani-relief.gov)"
+    USER_AGENT = "Sanjivini-DisasterRelief/1.0 (contact: admin@sanjivini-relief.gov)"
 
     # Category search terms for OpenStreetMap POI discovery
     AGENCY_SEARCH_QUERIES = {

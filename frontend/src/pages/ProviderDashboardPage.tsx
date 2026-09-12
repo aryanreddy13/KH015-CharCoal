@@ -285,7 +285,7 @@ export const ProviderDashboardPage: React.FC<ProviderDashboardProps> = () => {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-extrabold tracking-widest uppercase text-[#38bdf8] bg-[#0284c7]/10 px-2 py-0.5 rounded border border-[#0284c7]/30">
-                  SANJIVANI
+                  SANJIVINI
                 </span>
                 <span className="text-xs font-bold text-[#94a3b8] uppercase tracking-wider">
                   EMERGENCY SERVICE PROVIDER CONSOLE

@@ -38,7 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({ isConnected, onRefresh, activeAl
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="font-extrabold tracking-wider text-rose-500 font-mono text-lg">Sanjivani</span>
+              <span className="font-extrabold tracking-wider text-rose-500 font-mono text-lg">Sanjivini</span>
               <span className="text-xs bg-slate-800 text-slate-300 font-mono px-1.5 py-0.5 rounded border border-slate-700">
                 v1.0-P1
               </span>

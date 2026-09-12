@@ -92,7 +92,7 @@ class EmailService:
         </head>
         <body>
           <div class="container">
-            <span class="badge">SANJIVANI CRITICAL EMERGENCY ALERT</span>
+            <span class="badge">SANJIVINI CRITICAL EMERGENCY ALERT</span>
             <div class="title">Incident: {incident_id} ({disaster_type})</div>
             <p style="color: #cbd5e1; font-size: 14px;">A life-threatening disaster incident requires immediate emergency deployment in <strong>{zone_name}</strong>.</p>
             
@@ -116,7 +116,7 @@ class EmailService:
             {f'<div class="photo-note">📷 Citizen incident photograph attached as <code>incident-{incident_id}.jpg</code></div>' if photo_url else ''}
 
             <p style="color: #64748b; font-size: 12px; margin-top: 24px; border-top: 1px solid #1e293b; padding-top: 12px;">
-              Sanjivani Disaster Relief & Emergency Resource Coordinator Automated Dispatch Pipeline.
+              Sanjivini- Agentic Disaster Relief & Emergency Resource Coordinator Automated Dispatch Pipeline.
             </p>
           </div>
         </body>
@@ -148,7 +148,7 @@ class EmailService:
         # 3. Dispatch via Resend REST API
         try:
             payload = {
-                "from": settings.RESEND_FROM_EMAIL or "emergency-alerts@sanjivani-relief.gov",
+                "from": settings.RESEND_FROM_EMAIL or "emergency-alerts@sanjivini-relief.gov",
                 "to": [recipient],
                 "subject": subject,
                 "html": html_content,
