@@ -27,6 +27,7 @@ build/
 .expo-shared/
 web-build/
 *.tsbuildinfo
+*.timestamp-*.mjs
 
 # IDE & OS
 .DS_Store
